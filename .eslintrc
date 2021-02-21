@@ -1,0 +1,23 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "globalReturn": false,
+    "ecmaFeatures": {
+      "defaultParams": true,
+      "destructuring": true,
+      "experimentalObjectRestSpread": true,
+      "impliedStrict": true,
+      "restParams": true,
+      "spread": true,
+      "templateStrings": true
+    }
+  },
+  "env": {
+    "es6": true,
+    "commonjs": true,
+    "node": true
+  },
+  "extends": ["airbnb-base", "prettier"],
+  "plugins": ["prettier"]
+}
