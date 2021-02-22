@@ -18,7 +18,7 @@ module.exports = item => {
   return {
     Datum: item.Datum,
     semester: item.semester,
-    ...filteredItems,
+    ...Object.fromEntries(filteredItems),
     sum,
     avg,
     max,
