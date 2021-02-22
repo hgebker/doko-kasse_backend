@@ -1,7 +1,8 @@
 const { calculateReport } = require('./calculations');
 const { scan } = require('../../clients/ddbClient');
+const { parseSum } = require('../evenings/formatter');
 
-const getReport = async (tableName, semesterKey) => {
+const getSemesterReport = async (tableName, semesterKey) => {
   let scanParams;
 
   if (semesterKey) {
@@ -24,4 +25,19 @@ const getReport = async (tableName, semesterKey) => {
   }
 };
 
-module.exports = { getReport };
+const getCashReport = async tableName => {
+  const evenings = await scan(tableName);
+  const expenses = await scan('doko-ausgaben');
+
+  if (evenings.length) {
+    const totalIncome = evenings.reduce((total, evening) => total + parseSum(evening), 0);
+    const totalExpenses = expenses.reduce((total, expense) => total + expense.wert, 0);
+    const currentCash = totalIncome - totalExpenses;
+
+    return { totalIncome, totalExpenses, currentCash };
+  } else {
+    return null;
+  }
+};
+
+module.exports = { getSemesterReport, getCashReport };

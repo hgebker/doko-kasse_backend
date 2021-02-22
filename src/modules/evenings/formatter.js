@@ -1,24 +1,43 @@
-const PLAYERS = ['tim', 'jan', 'ole', 'hannes', 'louisa', 'sonstige'];
+const flow = require('lodash/flow');
 
-module.exports = item => {
-  const entries = Object.entries(item);
-  // Filter out the players and get their the values of whom participated
-  const filteredItems = entries.filter(([key]) => PLAYERS.includes(key));
-  const playerValues = filteredItems.filter(([key, value]) => key !== 'sonstige' && value).map(([, value]) => value);
+const calculateSum = values => values.reduce((sum, el) => sum + el, 0);
 
-  const sum = playerValues.reduce((sum, el) => sum + el, 0);
-  const avg = sum / playerValues.length;
+const calculateAverage = (value, count) => value / count;
 
-  const max = Math.max(...playerValues);
-  const maxPlayer = PLAYERS.filter(key => item[key] === max).join(', ');
+const filterIncomeEntries = entries => {
+  return entries.filter(([key]) => !['Datum', 'semester'].includes(key));
+};
 
-  const min = Math.min(...playerValues);
-  const minPlayer = PLAYERS.filter(key => item[key] === min).join(', ');
+const filterPlayerEntries = entries => {
+  return entries.filter(([key]) => !['Datum', 'semester', 'sonstige'].includes(key));
+};
+
+const filterPresentPlayerEntries = entries => {
+  return entries.filter(([, value]) => !!value);
+};
+
+const mapEntriesToValues = entries => {
+  return entries.map(([, value]) => value);
+};
+
+const parseEvening = evening => {
+  const playerEntries = filterPlayerEntries(Object.entries(evening));
+  const presentPlayerValues = flow(filterPresentPlayerEntries, mapEntriesToValues)(playerEntries);
+
+  const sum = calculateSum(presentPlayerValues);
+  const avg = calculateAverage(sum, presentPlayerValues.length);
+
+  const max = Math.max(...presentPlayerValues);
+  const maxPlayer = playerEntries.filter(([, value]) => value === max).join(', ');
+
+  const min = Math.min(...presentPlayerValues);
+  const minPlayer = playerEntries.filter(([, value]) => value === min).join(', ');
 
   return {
-    Datum: item.Datum,
-    semester: item.semester,
-    ...Object.fromEntries(filteredItems),
+    Datum: evening.Datum,
+    semester: evening.semester,
+    sonstige: evening.sonstige,
+    ...Object.fromEntries(playerEntries),
     sum,
     avg,
     max,
@@ -27,3 +46,7 @@ module.exports = item => {
     minPlayer,
   };
 };
+
+const parseSum = flow(Object.entries, filterIncomeEntries, mapEntriesToValues, calculateSum);
+
+module.exports = { parseEvening, parseSum };

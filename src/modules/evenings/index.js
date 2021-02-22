@@ -1,5 +1,5 @@
 const { scan, getItem, putItem, updateItem, deleteItem } = require('../../clients/ddbClient');
-const formatItem = require('./formatter');
+const { parseEvening } = require('./formatter');
 
 const getEvenings = async (tableName, semester) => {
   let scanParams;
@@ -17,7 +17,7 @@ const getEvenings = async (tableName, semester) => {
 
   const evenings = await scan(tableName, scanParams);
 
-  return evenings.map(formatItem).sort(({ Datum: a }, { Datum: b }) => (a > b) - (b > a));
+  return evenings.map(parseEvening).sort(({ Datum: a }, { Datum: b }) => (a > b) - (b > a));
 };
 
 const getEveningWithDate = async (tableName, date) => {
