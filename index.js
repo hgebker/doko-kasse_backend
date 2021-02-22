@@ -1,3 +1,4 @@
+'use strict';
 const awsServerlessExpressMiddleware = require('aws-serverless-express');
 const app = require('./app');
 

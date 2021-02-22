@@ -1,0 +1,9 @@
+{
+  "resource": "/{proxy+}",
+  "path": "/evenings",
+  "httpMethod": "GET",
+  "pathParameters": { "proxy": "/" },
+  "headers": {
+    "Accept": "application/json"
+  }
+}
