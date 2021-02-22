@@ -20,6 +20,18 @@ const mapEntriesToValues = entries => {
   return entries.map(([, value]) => value);
 };
 
+const mapEntriesToKeys = entries => {
+  return entries.map(([key]) => key);
+};
+
+const filterEntriesForValue = searchValue => {
+  return entries => entries.filter(([, value]) => value === searchValue);
+};
+
+const formatBestWorstPlayer = (entries, value) => {
+  return flow(filterEntriesForValue(value), mapEntriesToKeys)(entries).join(', ');
+};
+
 const parseEvening = evening => {
   const playerEntries = filterPlayerEntries(Object.entries(evening));
   const presentPlayerValues = flow(filterPresentPlayerEntries, mapEntriesToValues)(playerEntries);
@@ -28,10 +40,10 @@ const parseEvening = evening => {
   const avg = calculateAverage(sum, presentPlayerValues.length);
 
   const max = Math.max(...presentPlayerValues);
-  const maxPlayer = playerEntries.filter(([, value]) => value === max).join(', ');
+  const maxPlayer = formatBestWorstPlayer(playerEntries, max);
 
   const min = Math.min(...presentPlayerValues);
-  const minPlayer = playerEntries.filter(([, value]) => value === min).join(', ');
+  const minPlayer = formatBestWorstPlayer(playerEntries, min);
 
   return {
     Datum: evening.Datum,
