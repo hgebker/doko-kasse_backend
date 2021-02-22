@@ -7,7 +7,7 @@
     "semester": "ws1819"
   },
   "stageVariables": {
-    "tableName": "doko-abende"
+    "tableName": "evenings-dev"
   },
   "headers": {
     "Accept": "application/json"

@@ -1,5 +1,5 @@
 const { scan, getItem, putItem, updateItem, deleteItem } = require('../../clients/ddbClient');
-const { formatItem } = require('./formatter');
+const formatItem = require('./formatter');
 
 const getEvenings = async (tableName, semester) => {
   let scanParams;

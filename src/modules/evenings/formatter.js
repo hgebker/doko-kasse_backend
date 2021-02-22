@@ -1,8 +1,6 @@
 const PLAYERS = ['tim', 'jan', 'ole', 'hannes', 'louisa', 'sonstige'];
 
-const formatNumber = number => `${number.toFixed(2)} €`.replace('.', ',');
-
-const formatItem = item => {
+module.exports = item => {
   const entries = Object.entries(item);
   // Filter out the players and get their the values of whom participated
   const filteredItems = entries.filter(([key]) => PLAYERS.includes(key));
@@ -20,12 +18,12 @@ const formatItem = item => {
   return {
     Datum: item.Datum,
     semester: item.semester,
-    ...Object.fromEntries(filteredItems.map(([key, value]) => [key, formatNumber(value)])),
-    sum: formatNumber(sum),
-    avg: formatNumber(avg),
-    max: `${maxPlayer} - ${formatNumber(max)}`,
-    min: `${minPlayer} - ${formatNumber(min)}`,
+    ...filteredItems,
+    sum,
+    avg,
+    max,
+    min,
+    maxPlayer,
+    minPlayer,
   };
 };
-
-exports.formatItem = formatItem;
