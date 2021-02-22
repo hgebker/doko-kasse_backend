@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware');
 const AWS = require('aws-sdk');
+const cors = require('cors');
 
 AWS.config.update({ region: 'eu-central-1' });
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(awsServerlessExpressMiddleware.eventContext());
+app.use(cors());
 
 app.all('/', (req, res, next) => {
   console.log('REQUEST:');
