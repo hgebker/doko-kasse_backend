@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
     "deploy": "sam deploy --template-file template.yml --stack-name dokokasse-stack --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND --region eu-central-1 --s3-bucket dokokasse-bucket",
     "lint": "eslint ./{clients,modules,routes}/**/*.js",
     "format": "prettier --write \"**/*.{css,html,js,ts,tsx,json,md,yaml,yml}\""
