@@ -1,10 +1,10 @@
 {
   "resource": "/{proxy+}",
-  "path": "/evenings",
+  "path": "/evenings/1999-11-11",
   "httpMethod": "GET",
   "pathParameters": { "proxy": "/" },
   "stageVariables": {
-    "tableName": "evenings-dev"
+    "tableName": "doko-abende"
   },
   "headers": {
     "Accept": "application/json"

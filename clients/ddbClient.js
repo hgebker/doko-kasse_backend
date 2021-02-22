@@ -1,33 +1,21 @@
-const AWS = require('aws-sdk');
-AWS.config.update({ region: 'eu-central-1' });
+const { DocumentClient } = require('aws-sdk/clients/dynamodb');
+const dbClient = new DocumentClient();
 
-const {
-  DynamoDB: { DocumentClient },
-} = AWS;
-
-const callback = (resolve, reject) => {
-  return (error, data) => {
-    if (error) {
-      reject(error);
-    } else if (data) {
-      resolve(data);
-    }
-  };
+const scan = async (TableName, ScanParams) => {
+  const results = await dbClient.scan({ TableName, ...ScanParams }).promise();
+  return results.Items;
 };
 
-const scan = scanParams => {
-  return new Promise((resolve, reject) => {
-    new DocumentClient().scan(scanParams, callback(resolve, reject));
-  });
+const getItem = async (TableName, Key) => {
+  const result = await dbClient.get({ TableName, Key }).promise();
+  return result.Item || null;
 };
 
-const put = (TableName, Item) => {
-  return new Promise((resolve, reject) => {
-    new DocumentClient().put({ TableName, Item }, callback(resolve, reject));
-  });
+const putItem = async (TableName, Item) => {
+  await dbClient.put({ TableName, Item }).promise();
 };
 
-const update = (TableName, Key, Item) => {
+const updateItem = async (TableName, Key, Item) => {
   const UpdateExpression = Object.keys(Item).reduce((currentExpression, key) => {
     currentExpression += `${key} = :${key}, `;
 
@@ -38,12 +26,17 @@ const update = (TableName, Key, Item) => {
     currentValues[`:${key}`] = value;
   }, {});
 
-  return new Promise((resolve, reject) => {
-    new DocumentClient().update(
-      { TableName, Key, UpdateExpression, ExpressionAttributeValues },
-      callback(resolve, reject)
-    );
-  });
+  await dbClient.update({ TableName, Key, UpdateExpression, ExpressionAttributeValues }).promise();
 };
 
-module.exports = { scan, put, update };
+const deleteItem = async (TableName, Key) => {
+  await dbClient.delete({ TableName, Key }).promise();
+};
+
+module.exports = {
+  scan,
+  getItem,
+  putItem,
+  updateItem,
+  deleteItem,
+};

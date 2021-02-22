@@ -1,26 +1,47 @@
-const { scan, put } = require('../../clients/ddbClient');
+const { scan, getItem, putItem, updateItem, deleteItem } = require('../../clients/ddbClient');
 const { formatItem } = require('./formatter');
 
-const getEvenings = async () => {
-  const scanParams = {
-    TableName: 'doko-abende',
-  };
+const getEvenings = async (tableName, semester) => {
+  let scanParams;
 
-  const scanResults = await scan(scanParams);
+  if (semester) {
+    scanParams = {
+      ScanFilter: {
+        semester: {
+          ComparisonOperator: 'EQ',
+          AttributeValueList: [semester],
+        },
+      },
+    };
+  }
 
-  const returnValue = scanResults.Items.map(formatItem);
+  const evenings = await scan(tableName, scanParams);
 
-  returnValue.sort((a, b) => {
-    a = a.Datum;
-    b = b.Datum;
-    return (a > b) - (b > a);
-  });
-
-  return returnValue;
+  return evenings.map(formatItem).sort(({ Datum: a }, { Datum: b }) => (a > b) - (b > a));
 };
 
-const createEvening = item => {
-  return put('doko-abende', item);
+const getEveningWithDate = async (tableName, date) => {
+  const evening = await getItem(tableName, { Datum: date });
+
+  return evening;
 };
 
-module.exports = { getEvenings, createEvening };
+const createEvening = async (tableName, evening) => {
+  await putItem(tableName, evening);
+};
+
+const updateEveningwithDate = async (tableName, date, evening) => {
+  await updateItem(tableName, { Datum: date }, evening);
+};
+
+const deleteEveningWithDate = async (tableName, date) => {
+  await deleteItem(tableName, { Datum: date });
+};
+
+module.exports = {
+  getEvenings,
+  getEveningWithDate,
+  createEvening,
+  updateEveningwithDate,
+  deleteEveningWithDate,
+};

@@ -117,35 +117,19 @@ const calculateBest = averagePerPlayer => {
 };
 
 const calculateReport = evenings => {
+  const averagePerPlayer = calculateAveragePerPlayer(evenings);
+
   return {
     evenings,
-    get sumPerPlayer() {
-      return calculatePlayersTotal(this.evenings);
-    },
-    get minPerPlayer() {
-      return calculatePlayersMin(this.evenings);
-    },
-    get maxPerPlayer() {
-      return calculatePlayersMax(this.evenings);
-    },
-    get noOfParticipationsPerPlayer() {
-      return calculateNumberOfParticipationsForPlayers(this.evenings);
-    },
-    get averagePerPlayer() {
-      return calculateAveragePerPlayer(this.evenings);
-    },
-    get totalIncome() {
-      return calculateTotalIncome(this.evenings);
-    },
-    get eveningCount() {
-      return this.evenings.length;
-    },
-    get worst() {
-      return calculateWorst(this.averagePerPlayer);
-    },
-    get best() {
-      return calculateBest(this.averagePerPlayer);
-    },
+    eveningCount: evenings.length,
+    sumPerPlayer: calculatePlayersTotal(evenings),
+    minPerPlayer: calculatePlayersMin(evenings),
+    maxPerPlayer: calculatePlayersMax(evenings),
+    noOfParticipationsPerPlayer: calculateNumberOfParticipationsForPlayers(evenings),
+    averagePerPlayer,
+    totalIncome: calculateTotalIncome(evenings),
+    worst: calculateWorst(averagePerPlayer),
+    best: calculateBest(averagePerPlayer),
   };
 };
 

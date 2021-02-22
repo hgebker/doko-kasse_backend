@@ -3,8 +3,11 @@
   "path": "/evenings",
   "httpMethod": "GET",
   "pathParameters": { "proxy": "/" },
+  "queryStringParameters": {
+    "semester": "ws1819"
+  },
   "stageVariables": {
-    "tableName": "evenings-dev"
+    "tableName": "doko-abende"
   },
   "headers": {
     "Accept": "application/json"
