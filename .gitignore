@@ -1,3 +1,4 @@
 node_modules
 .vscode
-.aws-sams
+.aws-sam
+build

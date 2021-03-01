@@ -22,7 +22,7 @@ Resources:
   handlerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/index.handler
+      Handler: build/index.handler
       Runtime: nodejs14.x
       MemorySize: 128
       Timeout: 100

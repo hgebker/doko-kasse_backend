@@ -15,7 +15,7 @@ router.use((req, res, next) => {
 });
 
 router.get('/:date', async (req, res) => {
-  const evening = await getEveningWithDate(req.eveningsTable, req.params.date);
+  const evening = await getEveningWithDate(res.locals.eveningsTable, req.params.date);
 
   if (evening) {
     res.status(200).send(evening);
@@ -25,25 +25,25 @@ router.get('/:date', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-  const evenings = await getEvenings(req.eveningsTable, req.query.semester);
+  const evenings = await getEvenings(res.locals.eveningsTable, req.query.semester);
 
   res.status(200).send(evenings);
 });
 
 router.post('/', async (req, res) => {
-  await createEvening(req.eveningsTable, req.body);
+  await createEvening(res.locals.eveningsTable, req.body);
 
   res.status(201).end();
 });
 
 router.put('/', async (req, res) => {
-  await updateEvening(req.eveningsTable, req.body);
+  await updateEvening(res.locals.eveningsTable, req.body);
 
   res.status(204).end();
 });
 
 router.delete('/:date', async (req, res) => {
-  await deleteEveningWithDate(req.eveningsTable, req.params.date);
+  await deleteEveningWithDate(res.locals.eveningsTable, req.params.date);
 
   res.status(204).end();
 });

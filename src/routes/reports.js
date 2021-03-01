@@ -9,7 +9,7 @@ router.use((req, res, next) => {
 });
 
 router.get('/semester', async (req, res) => {
-  const report = await getSemesterReport(req.eveningsTable, req.query.semester);
+  const report = await getSemesterReport(res.locals.eveningsTable, req.query.semester);
 
   if (report) {
     res.status(200).send(report);
@@ -19,7 +19,7 @@ router.get('/semester', async (req, res) => {
 });
 
 router.get('/cash', async (req, res) => {
-  const cashReport = await getCashReport(req.eveningsTable, req.expensesTable);
+  const cashReport = await getCashReport(res.locals.eveningsTable, res.locals.expensesTable);
 
   if (cashReport) {
     res.status(200).send(cashReport);
