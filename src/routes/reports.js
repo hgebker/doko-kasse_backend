@@ -3,15 +3,13 @@ const router = express.Router();
 
 const { getSemesterReport, getCashReport } = require('../modules/reports');
 
-const getTableName = req => req.apiGateway.event.stageVariables.tableName || 'evenings-dev';
-
-router.all('/', (req, res, next) => {
+router.use((req, res, next) => {
   console.log('REPORTS');
   next();
 });
 
 router.get('/semester', async (req, res) => {
-  const report = await getSemesterReport(getTableName(req), req.query.semester);
+  const report = await getSemesterReport(req.eveningsTable, req.query.semester);
 
   if (report) {
     res.status(200).send(report);
@@ -21,7 +19,7 @@ router.get('/semester', async (req, res) => {
 });
 
 router.get('/cash', async (req, res) => {
-  const cashReport = await getCashReport(getTableName(req));
+  const cashReport = await getCashReport(req.eveningsTable, req.expensesTable);
 
   if (cashReport) {
     res.status(200).send(cashReport);

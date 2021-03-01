@@ -1,35 +1,33 @@
 const express = require('express');
 const router = express.Router();
 
-const { getExpenses, createExpense, updateExpenseWithKey, deleteExpenseWithKey } = require('../modules/expenses');
+const { getExpenses, createExpense, updateExpense, deleteExpenseWithKey } = require('../modules/expenses');
 
-const getTableName = req => req.apiGateway.event.stageVariables.expensesTable || 'expenses-dev';
-
-router.all('/', (req, res, next) => {
+router.use((req, res, next) => {
   console.log('EXPENSES');
   next();
 });
 
 router.get('/', async (req, res) => {
-  const expenses = await getExpenses(getTableName(req));
+  const expenses = await getExpenses(req.expensesTable);
 
   res.status(200).send(expenses);
 });
 
 router.post('/', async (req, res) => {
-  await createExpense(getTableName(req), req.body);
+  await createExpense(req.expensesTable, req.body);
 
   res.status(201).end();
 });
 
-router.put('/:key', async (req, res) => {
-  await updateExpenseWithKey(getTableName(req), req.params.key, req.body);
+router.put('/', async (req, res) => {
+  await updateExpense(req.expensesTable, req.body);
 
   res.status(204).end();
 });
 
 router.delete('/:key', async (req, res) => {
-  await deleteExpenseWithKey(getTableName(req), req.params.key);
+  await deleteExpenseWithKey(req.expensesTable, req.params.key);
 
   res.status(204).end();
 });

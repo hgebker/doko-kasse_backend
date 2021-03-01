@@ -6,21 +6,21 @@ const getExpenses = async tableName => {
   return expenses.sort(({ art: a }, { art: b }) => (a > b) - (b > a));
 };
 
-const createExpense = async (tableName, evening) => {
-  await putItem(tableName, evening);
+const createExpense = async (tableName, newExpense) => {
+  await putItem(tableName, newExpense);
 };
 
-const updateExpenseWithKey = async (tableName, kind, updatedExpense) => {
-  await updateItem(tableName, { art: kind }, updatedExpense);
+const updateExpense = async (tableName, updatedExpense) => {
+  await updateItem(tableName, 'art', updatedExpense);
 };
 
 const deleteExpenseWithKey = async (tableName, kind) => {
-  await deleteItem(tableName, { art: kind });
+  await deleteItem(tableName, 'art', kind);
 };
 
 module.exports = {
   getExpenses,
   createExpense,
-  updateExpenseWithKey,
+  updateExpense,
   deleteExpenseWithKey,
 };
