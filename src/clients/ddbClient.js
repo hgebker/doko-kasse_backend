@@ -1,40 +1,89 @@
 const { DocumentClient } = require('aws-sdk/clients/dynamodb');
 const dbClient = new DocumentClient();
 
-const scan = async (TableName, ScanParams) => {
-  const results = await dbClient.scan({ TableName, ...ScanParams }).promise();
-  return results.Items;
+const prepareAttributeExpression = entries => {
+  const preparedEntries = entries.filter(([, value]) => !!value);
+  const expressionParts = preparedEntries.map(([key]) => `${key} = :${key}`);
+
+  if (!preparedEntries.length) {
+    return { expression: null, attributeValues: null };
+  }
+
+  return {
+    expression: expressionParts.join(', '),
+    attributeValues: preparedEntries.reduce(
+      (currentValues, [key, value]) => ({ ...currentValues, [`:${key}`]: value }),
+      {}
+    ),
+  };
 };
 
-const getItem = async (TableName, Key) => {
-  const result = await dbClient.get({ TableName, Key }).promise();
-  return result.Item || null;
+const scanTable = async (tableName, scanFilter) => {
+  const params = {
+    TableName: tableName,
+  };
+
+  if (scanFilter) {
+    const { expression, attributeValues } = prepareAttributeExpression(Object.entries(scanFilter));
+
+    params.FilterExpression = expression;
+    params.ExpressionAttributeValues = attributeValues;
+  }
+
+  const { Items } = await dbClient.scan(params).promise();
+  return Items || [];
 };
 
-const putItem = async (TableName, Item) => {
-  await dbClient.put({ TableName, Item }).promise();
+const getItem = async (tableName, keyName, keyValue) => {
+  const params = {
+    TableName: tableName,
+    Key: {
+      [keyName]: keyValue,
+    },
+  };
+  const { Item } = await dbClient.get(params).promise();
+
+  return Item || null;
 };
 
-const updateItem = async (TableName, Key, Item) => {
-  const UpdateExpression = Object.keys(Item).reduce((currentExpression, key) => {
-    currentExpression += `${key} = :${key}, `;
+const putItem = async (tableName, newItem) => {
+  const params = {
+    TableName: tableName,
+    Item: newItem,
+  };
 
-    return currentExpression;
-  }, 'set ');
-
-  const ExpressionAttributeValues = Object.entries(Item).reduce((currentValues, [key, value]) => {
-    currentValues[`:${key}`] = value;
-  }, {});
-
-  await dbClient.update({ TableName, Key, UpdateExpression, ExpressionAttributeValues }).promise();
+  await dbClient.put(params).promise();
 };
 
-const deleteItem = async (TableName, Key) => {
-  await dbClient.delete({ TableName, Key }).promise();
+const updateItem = async (tableName, keyName, updatedItem) => {
+  const entries = Object.entries(updatedItem).filter(([key]) => key !== keyName);
+  const { expression, attributeValues } = prepareAttributeExpression(entries);
+
+  const params = {
+    TableName: tableName,
+    Key: {
+      [keyName]: updatedItem[keyName],
+    },
+    UpdateExpression: `set ${expression}`,
+    ExpressionAttributeValues: attributeValues,
+  };
+
+  await dbClient.update(params).promise();
+};
+
+const deleteItem = async (tableName, keyName, keyValue) => {
+  const params = {
+    TableName: tableName,
+    Key: {
+      [keyName]: keyValue,
+    },
+  };
+
+  await dbClient.delete(params).promise();
 };
 
 module.exports = {
-  scan,
+  scanTable,
   getItem,
   putItem,
   updateItem,

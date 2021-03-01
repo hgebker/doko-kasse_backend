@@ -7,7 +7,7 @@
     "semester": "ws1819"
   },
   "stageVariables": {
-    "tableName": "evenings-dev"
+    "eveningsTable": "evenings-dev"
   },
   "headers": {
     "Accept": "application/json"

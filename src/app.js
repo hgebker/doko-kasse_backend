@@ -17,15 +17,18 @@ app.use(cookieParser());
 app.use(awsServerlessExpressMiddleware.eventContext());
 app.use(cors());
 
-app.all('/', (req, res, next) => {
+app.use((req, res, next) => {
   console.log('REQUEST:');
-  console.log(req);
+
+  req.eveningsTable = req.apiGateway.event.stageVariables.eveningsTable || 'evenings-dev';
+  req.expensesTable = req.apiGateway.event.stageVariables.expensesTable || 'expenses-dev';
 
   next();
 });
 
 app.use('/evenings', require('./routes/evenings'));
 app.use('/reports', require('./routes/reports'));
+app.use('/expenses', require('./routes/expenses'));
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {
@@ -33,6 +36,7 @@ app.use((_req, _res, next) => {
 });
 
 // error handler
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _next) => {
   console.log('ERROR:');
   console.log(err);

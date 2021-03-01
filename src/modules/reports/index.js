@@ -1,40 +1,22 @@
-const { calculateReport } = require('./calculations');
-const { scan } = require('../../clients/ddbClient');
-const { parseSum } = require('../evenings/formatter');
+const { calculateSemesterReport, calculateCashReport } = require('./calculations');
+const { scanTable } = require('../../clients/ddbClient');
 
 const getSemesterReport = async (tableName, semesterKey) => {
-  let scanParams;
-
-  if (semesterKey) {
-    scanParams = {
-      ScanFilter: {
-        semester: {
-          ComparisonOperator: 'EQ',
-          AttributeValueList: [semesterKey],
-        },
-      },
-    };
-  }
-
-  const evenings = await scan(tableName, scanParams);
+  const evenings = await scanTable(tableName, { semester: semesterKey });
 
   if (evenings.length) {
-    return calculateReport(evenings);
+    return calculateSemesterReport(evenings);
   } else {
     return null;
   }
 };
 
-const getCashReport = async tableName => {
-  const evenings = await scan(tableName);
-  const expenses = await scan('doko-ausgaben');
+const getCashReport = async (eveningsTable, expensesTable) => {
+  const evenings = await scanTable(eveningsTable);
+  const expenses = await scanTable(expensesTable);
 
   if (evenings.length) {
-    const totalIncome = evenings.reduce((total, evening) => total + parseSum(evening), 0);
-    const totalExpenses = expenses.reduce((total, expense) => total + expense.wert, 0);
-    const currentCash = totalIncome - totalExpenses;
-
-    return { totalIncome, totalExpenses, currentCash };
+    return calculateCashReport(evenings, expenses);
   } else {
     return null;
   }
