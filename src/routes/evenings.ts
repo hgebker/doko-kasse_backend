@@ -1,15 +1,19 @@
-const express = require('express');
-const router = express.Router();
-
-const {
+import { Request, Router } from 'express';
+import {
   getEvenings,
   createEvening,
   updateEvening,
   deleteEveningWithDate,
   getEveningWithDate,
-} = require('../modules/evenings');
+} from '../modules/evenings';
 
-router.use((req, res, next) => {
+interface Query {
+  semester: string;
+}
+
+const router = Router();
+
+router.use((_req, _res, next) => {
   console.log('EVENINGS');
   next();
 });
@@ -24,7 +28,7 @@ router.get('/:date', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', async (req: Request<{}, {}, {}, Query>, res) => {
   const evenings = await getEvenings(res.locals.eveningsTable, req.query.semester);
 
   res.status(200).send(evenings);
@@ -48,4 +52,4 @@ router.delete('/:date', async (req, res) => {
   res.status(204).end();
 });
 
-module.exports = router;
+export default router;

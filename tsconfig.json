@@ -2,8 +2,10 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2017",
+    "lib": ["ES2019"],
     "noImplicitAny": true,
     "preserveConstEnums": true,
+    "rootDir": "./",
     "outDir": "./build",
     "sourceMap": true,
     "moduleResolution": "node",

@@ -1,7 +1,11 @@
-const { DocumentClient } = require('aws-sdk/clients/dynamodb');
+import { DocumentClient, ScanInput } from 'aws-sdk/clients/dynamodb';
 const dbClient = new DocumentClient();
 
-const prepareAttributeExpression = entries => {
+type ScanFilter = {
+  [x: string]: string;
+};
+
+const prepareAttributeExpression = (entries: [string, any][]) => {
   const preparedEntries = entries.filter(([, value]) => !!value);
   const expressionParts = preparedEntries.map(([key]) => `${key} = :${key}`);
 
@@ -18,8 +22,8 @@ const prepareAttributeExpression = entries => {
   };
 };
 
-const scanTable = async (tableName, scanFilter) => {
-  const params = {
+const scanTable = async <T extends {}>(tableName: string, scanFilter: ScanFilter): Promise<T[]> => {
+  const params: ScanInput = {
     TableName: tableName,
   };
 
@@ -31,10 +35,10 @@ const scanTable = async (tableName, scanFilter) => {
   }
 
   const { Items } = await dbClient.scan(params).promise();
-  return Items || [];
+  return Items as T[];
 };
 
-const getItem = async (tableName, keyName, keyValue) => {
+const getItem = async <T extends {}>(tableName: string, keyName: string, keyValue: any): Promise<T | null> => {
   const params = {
     TableName: tableName,
     Key: {
@@ -43,19 +47,19 @@ const getItem = async (tableName, keyName, keyValue) => {
   };
   const { Item } = await dbClient.get(params).promise();
 
-  return Item || null;
+  return (Item as T) || null;
 };
 
-const putItem = async (tableName, newItem) => {
+const putItem = async (tableName: string, newItem: any) => {
   const params = {
     TableName: tableName,
     Item: newItem,
   };
 
-  await dbClient.put(params).promise();
+  return await dbClient.put(params).promise();
 };
 
-const updateItem = async (tableName, keyName, updatedItem) => {
+const updateItem = async (tableName: string, keyName: string, updatedItem: any) => {
   const entries = Object.entries(updatedItem).filter(([key]) => key !== keyName);
   const { expression, attributeValues } = prepareAttributeExpression(entries);
 
@@ -68,10 +72,10 @@ const updateItem = async (tableName, keyName, updatedItem) => {
     ExpressionAttributeValues: attributeValues,
   };
 
-  await dbClient.update(params).promise();
+  return await dbClient.update(params).promise();
 };
 
-const deleteItem = async (tableName, keyName, keyValue) => {
+const deleteItem = async (tableName: string, keyName: string, keyValue: any) => {
   const params = {
     TableName: tableName,
     Key: {
@@ -79,13 +83,7 @@ const deleteItem = async (tableName, keyName, keyValue) => {
     },
   };
 
-  await dbClient.delete(params).promise();
+  return await dbClient.delete(params).promise();
 };
 
-module.exports = {
-  scanTable,
-  getItem,
-  putItem,
-  updateItem,
-  deleteItem,
-};
+export { scanTable, getItem, putItem, updateItem, deleteItem };
