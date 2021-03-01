@@ -8,7 +8,7 @@
     "Accept": "application/json"
   },
   "stageVariables": {
-    "tableName": "evenings-dev"
+    "eveningsTable": "evenings-dev"
   },
   "body": "{\r\n  \"Datum\": \"1999-11-11\",\r\n  \"tim\": 5,\r\n  \"jan\": 5,\r\n  \"ole\": 2.2,\r\n  \"hannes\": 3,\r\n  \"louisa\": 0,\r\n  \"sonstige\": 0.2,\r\n  \"semester\": \"ss21\"\r\n}"
 }

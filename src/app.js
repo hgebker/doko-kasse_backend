@@ -26,6 +26,7 @@ app.all('/', (req, res, next) => {
 
 app.use('/evenings', require('./routes/evenings'));
 app.use('/reports', require('./routes/reports'));
+app.use('/expenses', require('./routes/expenses'));
 
 // catch 404 and forward to error handler
 app.use((_req, _res, next) => {

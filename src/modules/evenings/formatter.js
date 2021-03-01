@@ -32,9 +32,11 @@ const formatBestWorstPlayer = (entries, value) => {
   return flow(filterEntriesForValue(value), mapEntriesToKeys)(entries).join(', ');
 };
 
+const getPresentPlayerValues = flow(filterPresentPlayerEntries, mapEntriesToValues);
+
 const parseEvening = evening => {
   const playerEntries = filterPlayerEntries(Object.entries(evening));
-  const presentPlayerValues = flow(filterPresentPlayerEntries, mapEntriesToValues)(playerEntries);
+  const presentPlayerValues = getPresentPlayerValues(playerEntries);
 
   const sum = calculateSum(presentPlayerValues);
   const avg = calculateAverage(sum, presentPlayerValues.length);

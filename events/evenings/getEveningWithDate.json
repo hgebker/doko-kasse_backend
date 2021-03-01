@@ -4,7 +4,7 @@
   "httpMethod": "GET",
   "pathParameters": { "proxy": "/" },
   "stageVariables": {
-    "tableName": "evenings-dev"
+    "eveningsTable": "evenings-dev"
   },
   "headers": {
     "Accept": "application/json"

@@ -1,3 +1,5 @@
+const { parseSum } = require('../evenings/formatter');
+
 const defaultPlayerValues = {
   tim: 0,
   jan: 0,
@@ -13,21 +15,20 @@ const filterPlayerValues = evening => {
   });
 };
 
-const calculateTotalIncome = evenings => {
-  const sumPerPlayer = calculatePlayersTotal(evenings);
+const calculateTotalExpenses = expenses => {
+  return expenses.reduce((total, expense) => total + expense.wert, 0);
+};
 
-  return Object.values(sumPerPlayer).reduce(function (total, playersSum) {
-    total += playersSum;
-    return total;
-  }, 0);
+const calculateTotalIncome = evenings => {
+  return evenings.reduce((total, evening) => total + parseSum(evening), 0);
 };
 
 const calculatePlayersTotal = evenings => {
   return evenings.reduce(
-    function (playersValues, evening) {
+    (playersValues, evening) => {
       const playerEntries = filterPlayerValues(evening);
 
-      playerEntries.forEach(function ([key, value]) {
+      playerEntries.forEach(([key, value]) => {
         playersValues[key] += value;
       });
 
@@ -39,10 +40,10 @@ const calculatePlayersTotal = evenings => {
 
 const calculatePlayersMin = evenings => {
   return evenings.reduce(
-    function (playersValues, evening) {
+    (playersValues, evening) => {
       const playerEntries = filterPlayerValues(evening);
 
-      playerEntries.forEach(function ([key, value]) {
+      playerEntries.forEach(([key, value]) => {
         if (!playersValues[key] || value < playersValues[key]) {
           playersValues[key] = value;
         }
@@ -56,10 +57,10 @@ const calculatePlayersMin = evenings => {
 
 const calculatePlayersMax = evenings => {
   return evenings.reduce(
-    function (playersValues, evening) {
+    (playersValues, evening) => {
       const playerEntries = filterPlayerValues(evening);
 
-      playerEntries.forEach(function ([key, value]) {
+      playerEntries.forEach(([key, value]) => {
         if (value > playersValues[key]) {
           playersValues[key] = value;
         }
@@ -73,10 +74,10 @@ const calculatePlayersMax = evenings => {
 
 const calculateNumberOfParticipationsForPlayers = evenings => {
   return evenings.reduce(
-    function (playersValues, evening) {
+    (playersValues, evening) => {
       const playerEntries = filterPlayerValues(evening);
 
-      playerEntries.forEach(function ([key, value]) {
+      playerEntries.forEach(([key, value]) => {
         if (value) {
           playersValues[key] = playersValues[key] + 1;
         }
@@ -94,7 +95,7 @@ const calculateAveragePerPlayer = evenings => {
   const sumEntries = Object.entries(sumPerPlayer);
 
   return sumEntries.reduce(
-    function (averagePerPlayer, [player, value]) {
+    (averagePerPlayer, [player, value]) => {
       averagePerPlayer[player] = value ? value / participationsPerPlayer[player] : 0;
       return averagePerPlayer;
     },
@@ -116,7 +117,7 @@ const calculateBest = averagePerPlayer => {
   return bestPlayer;
 };
 
-const calculateReport = evenings => {
+const calculateSemesterReport = evenings => {
   const averagePerPlayer = calculateAveragePerPlayer(evenings);
 
   return {
@@ -133,4 +134,12 @@ const calculateReport = evenings => {
   };
 };
 
-exports.calculateReport = calculateReport;
+const calculateCashReport = (evenings, expenses) => {
+  const totalIncome = calculateTotalIncome(evenings);
+  const totalExpenses = calculateTotalExpenses(expenses);
+  const currentCash = totalIncome - totalExpenses;
+
+  return { totalIncome, totalExpenses, currentCash };
+};
+
+module.exports = { calculateSemesterReport, calculateCashReport };

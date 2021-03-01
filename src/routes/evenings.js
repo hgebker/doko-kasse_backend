@@ -9,15 +9,14 @@ const {
   getEveningWithDate,
 } = require('../modules/evenings');
 
-const getTableName = req => req.apiGateway.event.stageVariables.tableName || 'evenings-dev';
-
-router.all('/', (req, res, next) => {
+router.use((req, res, next) => {
   console.log('EVENINGS');
+  req.tableName = req.apiGateway.event.stageVariables.eveningsTable || 'evenings-dev';
   next();
 });
 
 router.get('/:date', async (req, res) => {
-  const evening = await getEveningWithDate(getTableName(req), req.params.date);
+  const evening = await getEveningWithDate(req.tableName, req.params.date);
 
   if (evening) {
     res.status(200).send(evening);
@@ -27,25 +26,25 @@ router.get('/:date', async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-  const evenings = await getEvenings(getTableName(req), req.query.semester);
+  const evenings = await getEvenings(req.tableName, req.query.semester);
 
   res.status(200).send(evenings);
 });
 
 router.post('/', async (req, res) => {
-  await createEvening(getTableName(req), req.body);
+  await createEvening(req.tableName, req.body);
 
   res.status(201).end();
 });
 
 router.put('/:date', async (req, res) => {
-  await updateEveningwithDate(getTableName(req), req.params.date, req.body);
+  await updateEveningwithDate(req.tableName, req.params.date, req.body);
 
   res.status(204).end();
 });
 
 router.delete('/:date', async (req, res) => {
-  await deleteEveningWithDate(getTableName(req), req.params.date);
+  await deleteEveningWithDate(req.tableName, req.params.date);
 
   res.status(204).end();
 });
