@@ -22,7 +22,7 @@ const prepareAttributeExpression = (entries: [string, any][]) => {
   };
 };
 
-const scanTable = async <T extends {}>(tableName: string, scanFilter: ScanFilter): Promise<T[]> => {
+const scanTable = async <T extends {}>(tableName: string, scanFilter?: ScanFilter): Promise<T[]> => {
   const params: ScanInput = {
     TableName: tableName,
   };

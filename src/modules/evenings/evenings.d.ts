@@ -1,21 +1,21 @@
-export type Player = 'tim' | 'jan' | 'ole' | 'hannes' | 'louisa' | 'sonstige';
+type Player = 'tim' | 'jan' | 'ole' | 'hannes' | 'louisa' | 'sonstige';
 
-export type PlayerEntries = {
+type PlayerEntries = {
   [P in Player]: number;
 };
 
-export interface Evening extends PlayerEntries {
+interface Evening extends PlayerEntries {
   Datum: string;
   semester: Semester;
 }
 
-export type EveningKey = keyof Evening;
+type EveningKey = keyof Evening;
 
-export type IncomeKey = Omit<EveningKey, 'Datum' | 'semester'>;
+type IncomeKey = Omit<EveningKey, 'Datum' | 'semester'>;
 
-export type PlayerKey = Omit<IncomeKey, 'sonstige'>;
+type PlayerKey = Omit<IncomeKey, 'sonstige'>;
 
-export interface ParsedEvening extends Evening {
+interface ParsedEvening extends Evening {
   sum?: number;
   avg?: number;
   max?: number;

@@ -1,14 +1,14 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+import { getExpenses, createExpense, updateExpense, deleteExpenseWithKey } from '../modules/expenses';
 
-const { getExpenses, createExpense, updateExpense, deleteExpenseWithKey } = require('../modules/expenses');
+const router = Router();
 
-router.use((req, res, next) => {
+router.use((_req, _res, next) => {
   console.log('EXPENSES');
   next();
 });
 
-router.get('/', async (req, res) => {
+router.get('/', async (_req, res) => {
   const expenses = await getExpenses(res.locals.expensesTable);
 
   res.status(200).send(expenses);

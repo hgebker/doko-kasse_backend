@@ -1,5 +1,4 @@
 import flow from 'lodash/flow';
-import { Evening, IncomeKey, ParsedEvening, PlayerKey } from './evenings';
 
 type EveningEntry = [string, any];
 
