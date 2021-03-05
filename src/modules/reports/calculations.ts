@@ -1,6 +1,7 @@
-const { parseSum } = require('../evenings/formatter');
+import { parseSum } from '../evenings/formatter';
+import { filterIncomeEntries, filterPlayerEntries } from '../evenings/helper';
 
-const defaultPlayerValues = {
+const defaultPlayerValues: IncomeEntryObject = {
   tim: 0,
   jan: 0,
   ole: 0,
@@ -9,24 +10,18 @@ const defaultPlayerValues = {
   sonstige: 0,
 };
 
-const filterPlayerValues = evening => {
-  return Object.entries(evening).filter(function ([key]) {
-    return !['Datum', 'semester'].includes(key);
-  });
-};
-
-const calculateTotalExpenses = expenses => {
+const calculateTotalExpenses = (expenses: Expense[]): number => {
   return expenses.reduce((total, expense) => total + expense.wert, 0);
 };
 
-const calculateTotalIncome = evenings => {
+const calculateTotalIncome = (evenings: Evening[]): number => {
   return evenings.reduce((total, evening) => total + parseSum(evening), 0);
 };
 
-const calculatePlayersTotal = evenings => {
+const calculatePlayersTotal = (evenings: Evening[]): IncomeEntryObject => {
   return evenings.reduce(
     (playersValues, evening) => {
-      const playerEntries = filterPlayerValues(evening);
+      const playerEntries = filterIncomeEntries(Object.entries(evening));
 
       playerEntries.forEach(([key, value]) => {
         playersValues[key] += value;
@@ -34,14 +29,14 @@ const calculatePlayersTotal = evenings => {
 
       return playersValues;
     },
-    { ...defaultPlayerValues }
+    { ...defaultPlayerValues } as IncomeEntryObject
   );
 };
 
-const calculatePlayersMin = evenings => {
+const calculatePlayersMin = (evenings: Evening[]): IncomeEntryObject => {
   return evenings.reduce(
     (playersValues, evening) => {
-      const playerEntries = filterPlayerValues(evening);
+      const playerEntries = filterIncomeEntries(Object.entries(evening));
 
       playerEntries.forEach(([key, value]) => {
         if (!playersValues[key] || value < playersValues[key]) {
@@ -51,14 +46,14 @@ const calculatePlayersMin = evenings => {
 
       return playersValues;
     },
-    { ...defaultPlayerValues }
+    { ...defaultPlayerValues } as IncomeEntryObject
   );
 };
 
-const calculatePlayersMax = evenings => {
+const calculatePlayersMax = (evenings: Evening[]): IncomeEntryObject => {
   return evenings.reduce(
     (playersValues, evening) => {
-      const playerEntries = filterPlayerValues(evening);
+      const playerEntries = filterIncomeEntries(Object.entries(evening));
 
       playerEntries.forEach(([key, value]) => {
         if (value > playersValues[key]) {
@@ -68,14 +63,14 @@ const calculatePlayersMax = evenings => {
 
       return playersValues;
     },
-    { ...defaultPlayerValues }
+    { ...defaultPlayerValues } as IncomeEntryObject
   );
 };
 
-const calculateNumberOfParticipationsForPlayers = evenings => {
+const calculateNumberOfParticipationsForPlayers = (evenings: Evening[]): IncomeEntryObject => {
   return evenings.reduce(
     (playersValues, evening) => {
-      const playerEntries = filterPlayerValues(evening);
+      const playerEntries = filterIncomeEntries(Object.entries(evening));
 
       playerEntries.forEach(([key, value]) => {
         if (value) {
@@ -85,39 +80,41 @@ const calculateNumberOfParticipationsForPlayers = evenings => {
 
       return playersValues;
     },
-    { ...defaultPlayerValues }
+    { ...defaultPlayerValues } as IncomeEntryObject
   );
 };
 
-const calculateAveragePerPlayer = evenings => {
+const calculateAveragePerPlayer = (evenings: Evening[]): IncomeEntryObject => {
   const sumPerPlayer = calculatePlayersTotal(evenings);
   const participationsPerPlayer = calculateNumberOfParticipationsForPlayers(evenings);
-  const sumEntries = Object.entries(sumPerPlayer);
+  const sumEntries = Object.entries(sumPerPlayer) as IncomeEntry[];
 
   return sumEntries.reduce(
     (averagePerPlayer, [player, value]) => {
       averagePerPlayer[player] = value ? value / participationsPerPlayer[player] : 0;
       return averagePerPlayer;
     },
-    { ...defaultPlayerValues }
+    { ...defaultPlayerValues } as IncomeEntryObject
   );
 };
 
-const calculateWorst = averagePerPlayer => {
-  const entriesOfRealPlayers = Object.entries(averagePerPlayer).filter(([player]) => player !== 'sonstige');
-  const maxValue = Math.max(...Object.values(Object.fromEntries(entriesOfRealPlayers)));
+const calculateWorst = (averagePerPlayer: IncomeEntryObject): PlayerKey => {
+  const entriesOfRealPlayers = filterPlayerEntries(Object.entries(averagePerPlayer));
+  const maxValue = Math.max(...entriesOfRealPlayers.map(([, value]) => value));
   const [worstPlayer] = entriesOfRealPlayers.find(([, value]) => value === maxValue);
+
   return worstPlayer;
 };
 
-const calculateBest = averagePerPlayer => {
-  const entriesOfRealPlayers = Object.entries(averagePerPlayer).filter(([player]) => player !== 'sonstige');
-  const minValue = Math.min(...Object.values(Object.fromEntries(entriesOfRealPlayers)));
+const calculateBest = (averagePerPlayer: IncomeEntryObject): PlayerKey => {
+  const entriesOfRealPlayers = filterPlayerEntries(Object.entries(averagePerPlayer));
+  const minValue = Math.min(...entriesOfRealPlayers.map(([, value]) => value));
   const [bestPlayer] = entriesOfRealPlayers.find(([, value]) => value === minValue);
+
   return bestPlayer;
 };
 
-const calculateSemesterReport = evenings => {
+const calculateSemesterReport = (evenings: Evening[]): SemesterReport => {
   const averagePerPlayer = calculateAveragePerPlayer(evenings);
 
   return {
@@ -134,7 +131,7 @@ const calculateSemesterReport = evenings => {
   };
 };
 
-const calculateCashReport = (evenings, expenses) => {
+const calculateCashReport = (evenings: Evening[], expenses: Expense[]): CashReport => {
   const totalIncome = calculateTotalIncome(evenings);
   const totalExpenses = calculateTotalExpenses(expenses);
   const currentCash = totalIncome - totalExpenses;
@@ -142,4 +139,4 @@ const calculateCashReport = (evenings, expenses) => {
   return { totalIncome, totalExpenses, currentCash };
 };
 
-module.exports = { calculateSemesterReport, calculateCashReport };
+export { calculateSemesterReport, calculateCashReport };
