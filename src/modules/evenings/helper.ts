@@ -32,7 +32,9 @@ const formatBestWorstPlayer = (entries: PlayerEntry[], value: number): string =>
   return flow(filterEntriesForValue(value), mapEntriesToKeys)(entries).join(', ');
 };
 
-const getPresentPlayerValues = flow(filterPresentPlayerEntries, mapEntriesToValues);
+const getIncomeValues = flow(filterIncomeEntries, mapEntriesToValues);
+
+const getPresentPlayerValues = flow(filterPlayerEntries, filterPresentPlayerEntries, mapEntriesToValues);
 
 export {
   calculateSum,
@@ -45,4 +47,5 @@ export {
   filterEntriesForValue,
   formatBestWorstPlayer,
   getPresentPlayerValues,
+  getIncomeValues,
 };
