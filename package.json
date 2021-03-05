@@ -8,6 +8,7 @@
     "format": "prettier --write \"**/*.{css,html,js,ts,tsx,json,md,yaml,yml}\""
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.7.0",
     "aws-sdk": "^2.857.0",
     "aws-serverless-express": "^3.4.0",
     "cookie-parser": "~1.4.4",
