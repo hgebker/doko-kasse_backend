@@ -5,12 +5,13 @@
     "lib": ["ES2019"],
     "noImplicitAny": true,
     "preserveConstEnums": true,
-    "rootDir": "./",
     "outDir": "./build",
+    "rootDir": "./src",
     "sourceMap": true,
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": "src"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": ["node_modules", "**/*.spec.ts", "build"]
 }

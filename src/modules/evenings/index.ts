@@ -1,5 +1,4 @@
 import { scanTable, getItem, putItem, updateItem, deleteItem } from '../../clients/ddbClient';
-import { Evening, ParsedEvening } from './evenings';
 import { parseEvening } from './formatter';
 
 const getEvenings = async (tableName: string, semesterKey: string): Promise<ParsedEvening[]> => {
@@ -8,20 +7,26 @@ const getEvenings = async (tableName: string, semesterKey: string): Promise<Pars
   return evenings.map(parseEvening).sort(({ Datum: a }, { Datum: b }) => Number(a > b) - Number(b > a));
 };
 
-const getEveningWithDate = async (tableName: string, date: string) => {
+const getEveningWithDate = async (tableName: string, date: string): Promise<ParsedEvening> => {
   return getItem<Evening>(tableName, 'Datum', date);
 };
 
-const createEvening = async (tableName: string, newEvening: Evening) => {
-  return putItem(tableName, newEvening);
+const createEvening = async (tableName: string, newEvening: Evening): Promise<ParsedEvening> => {
+  await putItem(tableName, newEvening);
+
+  return parseEvening(newEvening);
 };
 
-const updateEvening = async (tableName: string, updatedEvening: Evening) => {
-  return updateItem(tableName, 'Datum', updatedEvening);
+const updateEvening = async (tableName: string, updatedEvening: Evening): Promise<Evening> => {
+  await updateItem(tableName, 'Datum', updatedEvening);
+
+  return parseEvening(updatedEvening);
 };
 
-const deleteEveningWithDate = async (tableName: string, date: string) => {
-  return deleteItem(tableName, 'Datum', date);
+const deleteEveningWithDate = async (tableName: string, date: string): Promise<string> => {
+  await deleteItem(tableName, 'Datum', date);
+
+  return date;
 };
 
 export { getEvenings, getEveningWithDate, createEvening, updateEvening, deleteEveningWithDate };

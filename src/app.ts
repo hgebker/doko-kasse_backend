@@ -9,6 +9,8 @@ import { appHandler, notFoundHandler } from './modules/middleware/errorHandler';
 import localsHandler from './modules/middleware/localsHandler';
 
 import eveningsRouter from './routes/evenings';
+import reportsRouter from './routes/reports';
+import expensesRouter from './routes/expenses';
 
 AWS.config.update({ region: 'eu-central-1' });
 
@@ -23,8 +25,8 @@ app.use(cors());
 app.use(localsHandler);
 
 app.use('/evenings', eveningsRouter);
-app.use('/reports', require('./routes/reports'));
-app.use('/expenses', require('./routes/expenses'));
+app.use('/reports', reportsRouter);
+app.use('/expenses', expensesRouter);
 
 app.use(notFoundHandler);
 app.use(appHandler);

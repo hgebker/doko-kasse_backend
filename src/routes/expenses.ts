@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getExpenses, createExpense, updateExpense, deleteExpenseWithKey } from '../modules/expenses';
+import { getExpenses, createExpense, updateExpense, deleteExpenseWithKey } from 'modules/expenses';
 
 const router = Router();
 
@@ -32,4 +32,4 @@ router.delete('/:key', async (req, res) => {
   res.status(204).end();
 });
 
-module.exports = router;
+export default router;

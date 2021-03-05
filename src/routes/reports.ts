@@ -1,14 +1,18 @@
-const express = require('express');
-const router = express.Router();
+import { Router, Request } from 'express';
+import { getSemesterReport, getCashReport } from 'modules/reports';
 
-const { getSemesterReport, getCashReport } = require('../modules/reports');
+interface Query {
+  semester: string;
+}
 
-router.use((req, res, next) => {
+const router = Router();
+
+router.use((_req, _res, next) => {
   console.log('REPORTS');
   next();
 });
 
-router.get('/semester', async (req, res) => {
+router.get('/semester', async (req: Request<{}, {}, {}, Query>, res) => {
   const report = await getSemesterReport(res.locals.eveningsTable, req.query.semester);
 
   if (report) {
@@ -18,7 +22,7 @@ router.get('/semester', async (req, res) => {
   }
 });
 
-router.get('/cash', async (req, res) => {
+router.get('/cash', async (_req, res) => {
   const cashReport = await getCashReport(res.locals.eveningsTable, res.locals.expensesTable);
 
   if (cashReport) {
@@ -28,4 +32,4 @@ router.get('/cash', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
