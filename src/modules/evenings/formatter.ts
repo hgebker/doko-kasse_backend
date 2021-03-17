@@ -2,19 +2,21 @@ import flow from 'lodash/flow';
 import {
   filterPlayerEntries,
   getPresentPlayerValues,
+  getIncomeValues,
   calculateSum,
   calculateAverage,
   formatBestWorstPlayer,
-  filterIncomeEntries,
-  mapEntriesToValues,
 } from './helper';
 
 const parseEvening = (evening: Evening): ParsedEvening => {
-  const playerEntries = filterPlayerEntries(Object.entries(evening));
-  const presentPlayerValues = getPresentPlayerValues(playerEntries);
+  const allEntries = Object.entries(evening);
 
-  const sum = calculateSum(presentPlayerValues);
-  const avg = calculateAverage(sum, presentPlayerValues.length);
+  const incomeValues = getIncomeValues(allEntries);
+  const playerEntries = filterPlayerEntries(allEntries);
+  const presentPlayerValues = getPresentPlayerValues(allEntries);
+
+  const sum = calculateSum(incomeValues);
+  const avg = calculateAverage(calculateSum(presentPlayerValues), presentPlayerValues.length);
 
   const max = Math.max(...presentPlayerValues);
   const maxPlayer = formatBestWorstPlayer(playerEntries, max);
@@ -33,11 +35,6 @@ const parseEvening = (evening: Evening): ParsedEvening => {
   };
 };
 
-const parseSum: (evening: Evening) => number = flow(
-  Object.entries,
-  filterIncomeEntries,
-  mapEntriesToValues,
-  calculateSum
-);
+const parseSum: (evening: Evening) => number = flow(Object.entries, getIncomeValues, calculateSum);
 
 export { parseEvening, parseSum };
