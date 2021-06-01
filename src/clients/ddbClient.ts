@@ -1,21 +1,37 @@
-import { DocumentClient, ScanInput } from 'aws-sdk/clients/dynamodb';
-const dbClient = new DocumentClient();
+import {
+  DynamoDBClient,
+  ScanCommand,
+  ScanCommandInput,
+  GetItemCommand,
+  PutItemCommand,
+  UpdateItemCommand,
+  DeleteItemCommand,
+} from '@aws-sdk/client-dynamodb';
 
 type ScanFilter = {
   [x: string]: string;
 };
 
-const prepareAttributeExpression = (entries: [string, any][]) => {
+interface AttributeExpression {
+  FilterExpression?: string;
+  ExpressionAttributeValues?: {
+    [x: string]: any;
+  };
+}
+
+const dbClient = new DynamoDBClient({ region: process.env.AWS_REGION });
+
+const prepareAttributeExpression = (entries: [string, any][]): AttributeExpression => {
   const preparedEntries = entries.filter(([, value]) => !!value);
   const expressionParts = preparedEntries.map(([key]) => `${key} = :${key}`);
 
   if (!preparedEntries.length) {
-    return { expression: null, attributeValues: null };
+    return { FilterExpression: null, ExpressionAttributeValues: null };
   }
 
   return {
-    expression: expressionParts.join(', '),
-    attributeValues: preparedEntries.reduce(
+    FilterExpression: expressionParts.join(', '),
+    ExpressionAttributeValues: preparedEntries.reduce(
       (currentValues, [key, value]) => ({ ...currentValues, [`:${key}`]: value }),
       {}
     ),
@@ -23,18 +39,18 @@ const prepareAttributeExpression = (entries: [string, any][]) => {
 };
 
 const scanTable = async <T extends {}>(tableName: string, scanFilter?: ScanFilter): Promise<T[]> => {
-  const params: ScanInput = {
+  const params: ScanCommandInput = {
     TableName: tableName,
   };
 
   if (scanFilter) {
-    const { expression, attributeValues } = prepareAttributeExpression(Object.entries(scanFilter));
+    const { FilterExpression, ExpressionAttributeValues } = prepareAttributeExpression(Object.entries(scanFilter));
 
-    params.FilterExpression = expression;
-    params.ExpressionAttributeValues = attributeValues;
+    params.FilterExpression = FilterExpression;
+    params.ExpressionAttributeValues = ExpressionAttributeValues;
   }
 
-  const { Items } = await dbClient.scan(params).promise();
+  const { Items } = await dbClient.send(new ScanCommand(params));
   return Items as T[];
 };
 
@@ -45,7 +61,7 @@ const getItem = async <T extends {}>(tableName: string, keyName: string, keyValu
       [keyName]: keyValue,
     },
   };
-  const { Item } = await dbClient.get(params).promise();
+  const { Item } = await dbClient.send(new GetItemCommand(params));
 
   return (Item as T) || null;
 };
@@ -56,23 +72,23 @@ const putItem = async (tableName: string, newItem: any) => {
     Item: newItem,
   };
 
-  return await dbClient.put(params).promise();
+  return await dbClient.send(new PutItemCommand(params));
 };
 
 const updateItem = async (tableName: string, keyName: string, updatedItem: any) => {
   const entries = Object.entries(updatedItem).filter(([key]) => key !== keyName);
-  const { expression, attributeValues } = prepareAttributeExpression(entries);
+  const { FilterExpression, ExpressionAttributeValues } = prepareAttributeExpression(entries);
 
   const params = {
     TableName: tableName,
     Key: {
       [keyName]: updatedItem[keyName],
     },
-    UpdateExpression: `set ${expression}`,
-    ExpressionAttributeValues: attributeValues,
+    UpdateExpression: `set ${FilterExpression}`,
+    ExpressionAttributeValues,
   };
 
-  return await dbClient.update(params).promise();
+  return await dbClient.send(new UpdateItemCommand(params));
 };
 
 const deleteItem = async (tableName: string, keyName: string, keyValue: any) => {
@@ -83,7 +99,7 @@ const deleteItem = async (tableName: string, keyName: string, keyValue: any) => 
     },
   };
 
-  return await dbClient.delete(params).promise();
+  return await dbClient.send(new DeleteItemCommand(params));
 };
 
 export { scanTable, getItem, putItem, updateItem, deleteItem };

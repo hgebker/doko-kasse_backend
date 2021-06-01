@@ -8,7 +8,9 @@ const getEvenings = async (tableName: string, semesterKey: string): Promise<Pars
 };
 
 const getEveningWithDate = async (tableName: string, date: string): Promise<ParsedEvening> => {
-  return getItem<Evening>(tableName, 'Datum', date);
+  const evening = await getItem<Evening>(tableName, 'Datum', date);
+
+  return parseEvening(evening);
 };
 
 const createEvening = async (tableName: string, newEvening: Evening): Promise<ParsedEvening> => {
@@ -17,7 +19,7 @@ const createEvening = async (tableName: string, newEvening: Evening): Promise<Pa
   return parseEvening(newEvening);
 };
 
-const updateEvening = async (tableName: string, updatedEvening: Evening): Promise<Evening> => {
+const updateEvening = async (tableName: string, updatedEvening: Evening): Promise<ParsedEvening> => {
   await updateItem(tableName, 'Datum', updatedEvening);
 
   return parseEvening(updatedEvening);
