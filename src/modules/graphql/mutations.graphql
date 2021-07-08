@@ -1,0 +1,8 @@
+type Mutation {
+  createEveningsDev(input: CreateEveningsDevInput!): EveningsDev
+  updateEveningsDev(input: UpdateEveningsDevInput!): EveningsDev
+  deleteEveningsDev(input: DeleteEveningsDevInput!): EveningsDev
+  createExpensesDev(input: CreateExpensesDevInput!): ExpensesDev
+  updateExpensesDev(input: UpdateExpensesDevInput!): ExpensesDev
+  deleteExpensesDev(input: DeleteExpensesDevInput!): ExpensesDev
+}

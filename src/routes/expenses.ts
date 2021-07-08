@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getExpenses, createExpense, updateExpense, deleteExpenseWithKey } from 'modules/expenses';
+import { getExpenses, createExpense, updateExpense, deleteExpenseWithKey } from '../modules/expenses';
 
 const router = Router();
 

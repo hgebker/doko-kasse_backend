@@ -1,0 +1,12 @@
+{
+  "resource": "/{proxy+}",
+  "path": "/graphql",
+  "httpMethod": "GET",
+  "pathParameters": { "proxy": "/" },
+  "stageVariables": {
+    "eveningsTable": "evenings-dev"
+  },
+  "headers": {
+    "Accept": "application/json"
+  }
+}

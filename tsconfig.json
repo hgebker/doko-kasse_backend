@@ -5,12 +5,13 @@
     "lib": ["ES2019"],
     "noImplicitAny": true,
     "preserveConstEnums": true,
-    "outDir": "./build",
-    "rootDir": "./src",
+    "outDir": "build",
+    "rootDir": "src",
     "sourceMap": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "baseUrl": "src"
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts", "build"]

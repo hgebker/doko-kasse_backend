@@ -1,5 +1,5 @@
 import { calculateSemesterReport, calculateCashReport } from './calculations';
-import { scanTable } from 'clients/ddbClient';
+import { scanTable } from '../../clients/ddbClient';
 
 const getSemesterReport = async (tableName: string, semesterKey: string): Promise<SemesterReport | null> => {
   const evenings = await scanTable<Evening>(tableName, { semester: semesterKey });

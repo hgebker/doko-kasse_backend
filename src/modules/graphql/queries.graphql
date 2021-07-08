@@ -1,0 +1,6 @@
+type Query {
+  getEveningsDev(Datum: AWSDate!): EveningsDev
+  listEveningsDevs(filter: TableEveningsDevFilterInput, limit: Int, nextToken: String): EveningsDevConnection
+  getExpensesDev(art: String!): ExpensesDev
+  listExpensesDevs(filter: TableExpensesDevFilterInput, limit: Int, nextToken: String): ExpensesDevConnection
+}

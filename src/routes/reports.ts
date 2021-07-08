@@ -1,5 +1,5 @@
 import { Router, Request } from 'express';
-import { getSemesterReport, getCashReport } from 'modules/reports';
+import { getSemesterReport, getCashReport } from '../modules/reports';
 
 interface Query {
   semester: string;
