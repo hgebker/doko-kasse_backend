@@ -1,0 +1,15 @@
+{
+  "resource": "/{proxy+}",
+  "path": "/evenings",
+  "httpMethod": "GET",
+  "pathParameters": { "proxy": "/" },
+  "queryStringParameters": {
+    "semester": "ws1819"
+  },
+  "stageVariables": {
+    "eveningsTable": "evenings-dev"
+  },
+  "headers": {
+    "Accept": "application/json"
+  }
+}

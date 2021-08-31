@@ -97,6 +97,8 @@ Resources:
         expensesTable: expenses-dev
         eveningsTable: evenings-dev
         earningsTable: earnings-dev
+      MethodSettings:
+        - { MetricsEnabled: true }
   apiStageProd:
     Type: "AWS::ApiGateway::Stage"
     Properties:
@@ -108,3 +110,5 @@ Resources:
         expensesTable: doko-ausgaben
         eveningsTable: doko-abende
         earningsTable: doko-einnahmen
+      MethodSettings:
+        - { MetricsEnabled: true }

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getEarnings, createEarning, updateEarning, deleteEarningWithKey } from 'modules/earnings';
+import { getEarnings, createEarning, updateEarning, deleteEarningWithKey } from '../modules/earnings';
 
 const router = Router();
 

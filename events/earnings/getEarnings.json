@@ -1,0 +1,12 @@
+{
+  "resource": "/{proxy+}",
+  "path": "/earnings",
+  "httpMethod": "GET",
+  "pathParameters": { "proxy": "/" },
+  "stageVariables": {
+    "earningsTable": "earnings-dev"
+  },
+  "headers": {
+    "Accept": "application/json"
+  }
+}
