@@ -1,0 +1,110 @@
+# This is the SAM template that represents the architecture of your serverless application
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
+
+# The AWSTemplateFormatVersion identifies the capabilities of the template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >-
+  dokokasse-lambda
+
+# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
+Transform: "AWS::Serverless-2016-10-31"
+
+# Resources declares the AWS resources that you want to include in the stack
+# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
+Resources:
+  lambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: build/index.handler
+      Runtime: nodejs14.x
+      MemorySize: 128
+      Timeout: 100
+      Description: A Lambda proxy function for the dokokasse-API.
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonDynamoDBFullAccess
+      Environment:
+        Variables:
+          NODE_PATH: build
+  lambdaPermissionDev:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref lambdaAliasDev
+      Principal: apigateway.amazonaws.com
+  lambdaPermissionProd:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref lambdaAliasProd
+      Principal: apigateway.amazonaws.com
+  lambdaAliasDev:
+    Type: AWS::Lambda::Alias
+    Properties:
+      Description: Development environment
+      FunctionName: !Ref lambda
+      FunctionVersion: $LATEST
+      Name: dev
+  lambdaAliasProd:
+    Type: AWS::Lambda::Alias
+    Properties:
+      Description: Production environment
+      FunctionName: !Ref lambda
+      FunctionVersion: $LATEST
+      Name: prod
+  api:
+    Type: "AWS::ApiGateway::RestApi"
+    Properties:
+      Name: dokokasse-api
+      Description: Proxy API for the dokokasse lambda
+      EndpointConfiguration:
+        Types: [REGIONAL]
+  apiProxyResource:
+    Type: "AWS::ApiGateway::Resource"
+    Properties:
+      ParentId: !GetAtt api.RootResourceId
+      PathPart: "{proxy+}"
+      RestApiId: !Ref api
+  apiProxyMethod:
+    Type: "AWS::ApiGateway::Method"
+    Properties:
+      RestApiId: !Ref api
+      ResourceId: !Ref apiProxyResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambda.Arn}:${!stageVariables.lambdaAlias}/invocations
+  apiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: apiProxyMethod
+    Properties:
+      RestApiId: !Ref api
+      Description: Deployment for dokokasse proxy API
+      StageName: deployment
+  apiStageDev:
+    Type: "AWS::ApiGateway::Stage"
+    Properties:
+      DeploymentId: !Ref apiDeployment
+      RestApiId: !Ref api
+      StageName: dev
+      Variables:
+        lambdaAlias: dev
+        expensesTable: expenses-dev
+        eveningsTable: evenings-dev
+        earningsTable: earnings-dev
+  apiStageProd:
+    Type: "AWS::ApiGateway::Stage"
+    Properties:
+      DeploymentId: !Ref apiDeployment
+      RestApiId: !Ref api
+      StageName: prod
+      Variables:
+        lambdaAlias: prod
+        expensesTable: doko-ausgaben
+        eveningsTable: doko-abende
+        earningsTable: doko-einnahmen
