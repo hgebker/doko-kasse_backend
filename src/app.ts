@@ -11,6 +11,7 @@ import localsHandler from './modules/middleware/localsHandler';
 import eveningsRouter from './routes/evenings';
 import reportsRouter from './routes/reports';
 import expensesRouter from './routes/expenses';
+import earningsRouter from './routes/earnings';
 
 AWS.config.update({ region: 'eu-central-1' });
 
@@ -27,6 +28,7 @@ app.use(localsHandler);
 app.use('/evenings', eveningsRouter);
 app.use('/reports', reportsRouter);
 app.use('/expenses', expensesRouter);
+app.use('/earnings', earningsRouter);
 
 app.use(notFoundHandler);
 app.use(appHandler);

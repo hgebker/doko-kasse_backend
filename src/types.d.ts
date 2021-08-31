@@ -54,3 +54,9 @@ interface Expense {
   wert: number;
   semester: Semester;
 }
+
+interface Earning {
+  art: string;
+  wert: number;
+  semester: Semester;
+}
