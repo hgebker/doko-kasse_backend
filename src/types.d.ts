@@ -1,23 +1,19 @@
-type IncomeKey = 'tim' | 'jan' | 'ole' | 'hannes' | 'louisa' | 'sonstige';
+type PlayerKey = 'tim' | 'jan' | 'ole' | 'hannes' | 'louisa';
 
 type EveningEntry = [string, any];
 
-type IncomeEntry = [IncomeKey, number];
-
 type PlayerEntry = [PlayerKey, number];
 
-type IncomeEntryObject = {
-  [P in IncomeKey]: number;
+type PlayerEntryObject = {
+  [P in PlayerKey]: number;
 };
 
-interface Evening extends IncomeEntryObject {
+interface Evening extends PlayerEntryObject {
   Datum: string;
   semester: Semester;
 }
 
 type EveningKey = keyof Evening;
-
-type PlayerKey = Omit<IncomeKey, 'sonstige'>;
 
 interface ParsedEvening extends Evening {
   sum?: number;
@@ -33,11 +29,11 @@ type Semester = 'ws1819' | 'ss19' | 'ws1920' | 'ss20' | 'ws2021' | 'ss21';
 interface SemesterReport {
   evenings: Evening[];
   eveningCount: number;
-  sumPerPlayer: IncomeEntryObject;
-  minPerPlayer: IncomeEntryObject;
-  maxPerPlayer: IncomeEntryObject;
-  noOfParticipationsPerPlayer: IncomeEntryObject;
-  averagePerPlayer: IncomeEntryObject;
+  sumPerPlayer: PlayerEntryObject;
+  minPerPlayer: PlayerEntryObject;
+  maxPerPlayer: PlayerEntryObject;
+  noOfParticipationsPerPlayer: PlayerEntryObject;
+  averagePerPlayer: PlayerEntryObject;
   totalIncome: number;
   worst: PlayerKey;
   best: PlayerKey;
@@ -51,6 +47,12 @@ interface CashReport {
 
 interface Expense {
   art: string;
-  wert: number;
+  betrag: number;
+  semester: Semester;
+}
+
+interface Earning {
+  art: string;
+  betrag: number;
   semester: Semester;
 }

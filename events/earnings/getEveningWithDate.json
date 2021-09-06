@@ -1,0 +1,12 @@
+{
+  "resource": "/{proxy+}",
+  "path": "/evenings/1999-11-11",
+  "httpMethod": "GET",
+  "pathParameters": { "proxy": "/" },
+  "stageVariables": {
+    "eveningsTable": "evenings-dev"
+  },
+  "headers": {
+    "Accept": "application/json"
+  }
+}

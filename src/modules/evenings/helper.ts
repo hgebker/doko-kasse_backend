@@ -4,12 +4,8 @@ const calculateSum = (values: number[]): number => values.reduce((sum, el) => su
 
 const calculateAverage = (value: number, count: number): number => value / count;
 
-const filterIncomeEntries = (entries: EveningEntry[]): IncomeEntry[] => {
-  return entries.filter(([key]) => !['Datum', 'semester'].includes(key)) as IncomeEntry[];
-};
-
 const filterPlayerEntries = (entries: EveningEntry[]): PlayerEntry[] => {
-  return entries.filter(([key]) => !['Datum', 'semester', 'sonstige'].includes(key)) as PlayerEntry[];
+  return entries.filter(([key]) => !['Datum', 'semester'].includes(key)) as PlayerEntry[];
 };
 
 const filterPresentPlayerEntries = (entries: PlayerEntry[]): PlayerEntry[] => {
@@ -32,14 +28,13 @@ const formatBestWorstPlayer = (entries: PlayerEntry[], value: number): string =>
   return flow(filterEntriesForValue(value), mapEntriesToKeys)(entries).join(', ');
 };
 
-const getIncomeValues = flow(filterIncomeEntries, mapEntriesToValues);
+const getPlayerValues = flow(filterPlayerEntries, mapEntriesToValues);
 
-const getPresentPlayerValues = flow(filterPlayerEntries, filterPresentPlayerEntries, mapEntriesToValues);
+const getPresentPlayerValues = flow(filterPresentPlayerEntries, mapEntriesToValues);
 
 export {
   calculateSum,
   calculateAverage,
-  filterIncomeEntries,
   filterPlayerEntries,
   filterPresentPlayerEntries,
   mapEntriesToValues,
@@ -47,5 +42,5 @@ export {
   filterEntriesForValue,
   formatBestWorstPlayer,
   getPresentPlayerValues,
-  getIncomeValues,
+  getPlayerValues,
 };

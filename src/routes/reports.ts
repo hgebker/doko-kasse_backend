@@ -1,5 +1,5 @@
 import { Router, Request } from 'express';
-import { getSemesterReport, getCashReport } from 'modules/reports';
+import { getSemesterReport, getCashReport } from '../modules/reports';
 
 interface Query {
   semester: string;
@@ -23,7 +23,8 @@ router.get('/semester', async (req: Request<{}, {}, {}, Query>, res) => {
 });
 
 router.get('/cash', async (_req, res) => {
-  const cashReport = await getCashReport(res.locals.eveningsTable, res.locals.expensesTable);
+  const { eveningsTable, expensesTable, earningsTable } = res.locals;
+  const cashReport = await getCashReport(eveningsTable, expensesTable, earningsTable);
 
   if (cashReport) {
     res.status(200).send(cashReport);

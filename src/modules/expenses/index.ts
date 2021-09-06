@@ -1,4 +1,4 @@
-import { scanTable, putItem, updateItem, deleteItem } from 'clients/ddbClient';
+import { scanTable, putItem, updateItem, deleteItem } from '../../clients/ddbClient';
 
 const getExpenses = async (tableName: string): Promise<Expense[]> => {
   const expenses = await scanTable<Expense>(tableName);
