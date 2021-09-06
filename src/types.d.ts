@@ -47,12 +47,12 @@ interface CashReport {
 
 interface Expense {
   art: string;
-  wert: number;
+  betrag: number;
   semester: Semester;
 }
 
 interface Earning {
   art: string;
-  wert: number;
+  betrag: number;
   semester: Semester;
 }

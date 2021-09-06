@@ -106,7 +106,7 @@ const calculateBest = (averagePerPlayer: PlayerEntryObject): PlayerKey => {
 };
 
 const calculateTotalExpenses = (expenses: Expense[]): number => {
-  return expenses.reduce((total, expense) => total + expense.wert, 0);
+  return expenses.reduce((total, expense) => total + expense.betrag, 0);
 };
 
 const calculateTotalRegularIncome = (evenings: Evening[]): number => {
@@ -114,7 +114,7 @@ const calculateTotalRegularIncome = (evenings: Evening[]): number => {
 };
 
 const calculateTotalExtraIncome = (earnings: Earning[]): number => {
-  return earnings.reduce((total, earning) => total + earning.wert, 0);
+  return earnings.reduce((total, earning) => total + earning.betrag, 0);
 };
 
 const calculateSemesterReport = (evenings: Evening[]): SemesterReport => {
