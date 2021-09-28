@@ -110,7 +110,7 @@ const calculateTotalExpenses = (expenses: Expense[]): number => {
 };
 
 const calculateTotalRegularIncome = (evenings: Evening[]): number => {
-  return evenings.reduce((total, evening) => total + parseSum(evening), 0);
+  return evenings.filter(evening => !!evening.gezahlt).reduce((total, evening) => total + parseSum(evening), 0);
 };
 
 const calculateTotalExtraIncome = (earnings: Earning[]): number => {

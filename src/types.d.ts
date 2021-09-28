@@ -11,6 +11,7 @@ type PlayerEntryObject = {
 interface Evening extends PlayerEntryObject {
   Datum: string;
   semester: Semester;
+  gezahlt: Boolean;
 }
 
 type EveningKey = keyof Evening;
