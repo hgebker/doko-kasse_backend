@@ -53,18 +53,13 @@ Resources:
     Properties:
       Description: Production environment
       FunctionName: !Ref lambda
-      FunctionVersion: !GetAtt lambdaVersionProdV3.Version
+      FunctionVersion: !GetAtt lambdaVersionProdV4.Version
       Name: prod
-  lambdaVersionProd:
+  lambdaVersionProdV4:
     Type: AWS::Lambda::Version
     Properties:
       FunctionName: !Ref lambda
-      Description: v1
-  lambdaVersionProdV3:
-    Type: AWS::Lambda::Version
-    Properties:
-      FunctionName: !Ref lambda
-      Description: v3
+      Description: v4
   api:
     Type: "AWS::ApiGateway::RestApi"
     Properties:

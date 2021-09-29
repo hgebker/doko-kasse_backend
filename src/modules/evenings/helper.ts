@@ -5,7 +5,7 @@ const calculateSum = (values: number[]): number => values.reduce((sum, el) => su
 const calculateAverage = (value: number, count: number): number => value / count;
 
 const filterPlayerEntries = (entries: EveningEntry[]): PlayerEntry[] => {
-  return entries.filter(([key]) => !['Datum', 'semester'].includes(key)) as PlayerEntry[];
+  return entries.filter(([key]) => !['Datum', 'semester', 'gezahlt'].includes(key)) as PlayerEntry[];
 };
 
 const filterPresentPlayerEntries = (entries: PlayerEntry[]): PlayerEntry[] => {
